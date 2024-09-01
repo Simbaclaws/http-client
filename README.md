@@ -8,6 +8,8 @@ This project is a simple HTTP client library built on top of the Fetch API in Ty
 
 If you are a well-known and established security auditor or expert and would like to help improve this code, please feel free to submit a pull request. I'm open to any feedback regarding potential vulnerabilities or incorrect implementations.
 
+**DISCLAIMER**: Some of this code is AI generated, with human intervention.
+
 ---
 
 ## Features
