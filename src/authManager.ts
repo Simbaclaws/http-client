@@ -1,9 +1,9 @@
 /**
  * @file AuthManager.ts
  * @description This file contains the AuthManager class, which is responsible for managing 
- * authentication mechanisms such as JWT tokens and secure cookies. The class provides methods 
- * to set and clear JWT tokens, configure secure cookie usage, and apply the appropriate 
- * authentication headers or cookies to HTTP requests.
+ * authentication mechanisms such as JWT tokens. The class provides methods 
+ * to set and clear JWT tokens, and apply the appropriate 
+ * authentication headers to HTTPS requests.
  * 
  * WARNING: I'm not a security expert, don't rely on it in production if it's vital to your organization's needs.
  * This is provided AS IS, don't make assumptions about the source code without doing a proper security audit before using it in production!
@@ -11,7 +11,7 @@
  * If a well-known established security auditor wants to help improve this code, please submit a pull request and let me know of any vulnerabilities/wrong implementations in code.
  *
  * @version 1.0.0
- * @license MIT
+ * @license GPL
  * @author Hylke Hellinga
  */
 
