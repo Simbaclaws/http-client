@@ -21,8 +21,6 @@
  */
 export class AuthManager {
     private jwtToken: string | null = null;
-    private useSecureCookie: boolean = false;
-    private cookieName: string = 'auth_token';
 
     /**
      * Sets the JWT token for authentication. Stores it in memory.
@@ -40,26 +38,6 @@ export class AuthManager {
     }
 
     /**
-     * Configures the use of secure cookie authentication.
-     * @param {boolean} useSecureCookie - Whether to use secure cookies.
-     * @param {string} [cookieName='auth_token'] - The name of the secure cookie.
-     */
-    public configureSecureCookie(useSecureCookie: boolean, cookieName: string = 'auth_token'): void {
-        this.useSecureCookie = useSecureCookie;
-        this.cookieName = cookieName;
-    }
-
-    /**
-     * Retrieves a cookie value by name.
-     * @param {string} name - The name of the cookie to retrieve.
-     * @returns {string | null} - The cookie value or null if not found.
-     */
-    private getCookie(name: string): string | null {
-        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-        return match ? decodeURIComponent(match[2]) : null;
-    }
-
-    /**
      * Applies the appropriate authentication headers or cookies to the request.
      * @param {HeadersInit} headers - The headers object to apply the authentication to.
      * @returns {HeadersInit} - The headers with the authentication applied.
@@ -72,12 +50,6 @@ export class AuthManager {
                 headers.push(['Authorization', `Bearer ${this.jwtToken}`]);
             } else if (typeof headers === 'object') {
                 headers['Authorization'] = `Bearer ${this.jwtToken}`;
-            }
-        } else if (this.useSecureCookie) {
-            const authToken = this.getCookie(this.cookieName);
-            if (authToken) {
-                // No need to manually set cookies in headers; the browser sends them automatically.
-                console.info('Using secure cookies for authentication.');
             }
         }
         return headers;

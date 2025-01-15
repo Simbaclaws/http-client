@@ -35,7 +35,11 @@ export default class HTTPClient {
         this.authManager = authManager;
 
         if (!authManager && !this.hasWarnedAboutNoAuth) {
-            console.warn(`Warning: You are using HTTPClient without an AuthManager for base URL ${baseUrl}. This means no authentication will be applied.`);
+            console.warn(`
+                Warning: You are using HTTPClient without an AuthManager for base URL ${baseUrl}.
+                This means no authentication will be applied. (No JWT)
+                If you are using Secure HTTP Only cookies, this should be ignored.
+                `);
             this.hasWarnedAboutNoAuth = true;
         }
     }
@@ -566,7 +570,6 @@ export default class HTTPClient {
     /**
      * Enforces OWASP security rules, such as avoiding insecure authentication schemes,
      * ensuring API keys and credentials are not passed in URLs or headers in an insecure manner,
-     * checking for secure cookie authentication, and enforcing secure protocols.
      * @param {HeadersInit} headers - The headers for the request.
      * @throws {Error} - Throws an error if any OWASP security rules are violated.
      */
@@ -610,32 +613,7 @@ export default class HTTPClient {
             const cookie = this.getHeader(headers, 'Cookie');
             if (!cookie) {
                 console.warn('Using bearer tokens with cookies is recommended for added security.');
-            } else {
-                this.checkCookieSecurity(cookie);
             }
-        }
-    }
-
-    /**
-     * Checks cookie attributes to ensure they follow OWASP guidelines for secure authentication.
-     * @param {string} cookie - The cookie header from the request.
-     * @throws {Error} - Throws an error if cookie attributes do not meet security requirements.
-     */
-    private checkCookieSecurity(cookie: string): void {
-        const secure = cookie.includes('Secure');
-        const httpOnly = cookie.includes('HttpOnly');
-        const sameSite = cookie.includes('SameSite');
-
-        if (!secure) {
-            throw new Error('Cookies must be set with the Secure attribute.');
-        }
-
-        if (!httpOnly) {
-            throw new Error('Cookies must be set with the HttpOnly attribute.');
-        }
-
-        if (!sameSite) {
-            throw new Error('Cookies must be set with the SameSite attribute (Lax or Strict).');
         }
     }
 }
