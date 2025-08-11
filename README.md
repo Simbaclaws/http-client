@@ -2,12 +2,12 @@
 A simple, dependency-free JavaScript wrapper for the Fetch API, designed to streamline HTTP requests. This client provides a clean, class-based interface for common REST methods and handles response parsing automatically based on content types.
 
 ##  ✨ Features
-- Simplified Interface: A clean, intuitive class-based wrapper around the native Fetch API.
-- Standard HTTP Methods: Provides clear methods for GET, POST, PUT, PATCH, DELETE, and HEAD.
-- Automatic Content-Type Handling: Intelligently parses response bodies (JSON, Text, Blob, FormData, etc.) based on the Content-Type header.
-- Detailed Status Code Logging: Logs descriptive messages for all standard HTTP status codes (1xx, 2xx, 3xx, 4xx, 5xx) to the console for easier debugging.
-- Automatic JSON Header: Automatically sets the Content-Type: application/json header for object-based request bodies.
-- Zero Dependencies: Written in plain JavaScript with no external libraries required.
+* ✨ **Simplified Interface:** A clean, intuitive class-based wrapper around the native Fetch API.
+* 📡 **Standard HTTP Methods:** Provides clear methods for GET, POST, PUT, PATCH, DELETE, and HEAD.
+* 🔄 **Automatic Content-Type Handling:** Intelligently parses response bodies (JSON, Text, Blob, FormData, etc.) based on the Content-Type header.
+* ✍️ **Detailed Status Code Logging:** Logs descriptive messages for all standard HTTP status codes (1xx, 2xx, 3xx, 4xx, 5xx) to the console for easier debugging.
+* ⚙️ **Automatic JSON Header:** Automatically sets the Content-Type: application/json header for object-based request bodies.
+* 📦 **Zero Dependencies:** Written in plain JavaScript with no external libraries required.
 
 ## 🚀 Installation
 Since this is a single, dependency-free file, no installation via a package manager is needed.
