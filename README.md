@@ -1,112 +1,86 @@
-# HTTPClient Library
+# httpClient.js
+A simple, dependency-free JavaScript wrapper for the Fetch API, designed to streamline HTTP requests. This client provides a clean, class-based interface for common REST methods and handles response parsing automatically based on content types.
 
-This project is a simple HTTP client library built on top of the Fetch API in TypeScript. It is designed to make HTTP requests with support for various HTTP methods, while adhering to security best practices including OWASP guidelines and RFC 9110.
+##  ✨ Features
+- Simplified Interface: A clean, intuitive class-based wrapper around the native Fetch API.
+- Standard HTTP Methods: Provides clear methods for GET, POST, PUT, PATCH, DELETE, and HEAD.
+- Automatic Content-Type Handling: Intelligently parses response bodies (JSON, Text, Blob, FormData, etc.) based on the Content-Type header.
+- Detailed Status Code Logging: Logs descriptive messages for all standard HTTP status codes (1xx, 2xx, 3xx, 4xx, 5xx) to the console for easier debugging.
+- Automatic JSON Header: Automatically sets the Content-Type: application/json header for object-based request bodies.
+- Zero Dependencies: Written in plain JavaScript with no external libraries required.
 
-## ⚠️ Warning
+## 🚀 Installation
+Since this is a single, dependency-free file, no installation via a package manager is needed.
 
-**WARNING**: I'm not a security expert, and this library should not be relied upon in production if security is critical to your organization's needs. This code is provided **AS IS**, and you should not make any assumptions about its security or reliability without performing a thorough security audit before using it in production.
+Simply place the httpClient.js file in your project's source directory (e.g., /src/utils/) and import it into your module.
 
-If you are a well-known and established security auditor or expert and would like to help improve this code, please feel free to submit a pull request. I'm open to any feedback regarding potential vulnerabilities or incorrect implementations.
-
-**DISCLAIMER**: Some of this code is AI generated, with human intervention.
-
----
-
-## Features
-
-- Supports HTTP methods: GET, POST, PUT, DELETE, PATCH, and HEAD.
-- Optional integration with an `AuthManager` for JWT tokens or secure cookie authentication.
-- Handles HTTP status codes with appropriate logging and error handling.
-- Parses responses based on `Content-Type` headers into appropriate JavaScript types.
-- Logs warnings when security best practices are not followed (e.g., using HTTP instead of HTTPS, missing authentication).
-
-## Installation
-
-To install the library, run:
-
-```bash
-npm install git+https://github.com/Simbaclaws/http-client-lib.git
+```javascript
+// In your application file (e.g., /src/app.js)
+import HTTPClient from './utils/httpClient.js';
 ```
+## Usage
+Instantiate the HTTPClient with the base URL of the API you want to communicate with. You can then call the request methods on the instance.
 
-## Basic Example
+Example
+```javascript
+import HTTPClient from './httpClient.js';
 
-If your API does not require authentication, you can instantiate the HTTPClient without providing an AuthManager.
+// 1. Initialize the client with your API's base URL
+const apiClient = new HTTPClient('https://api.example.com');
 
-```typescript
-import HTTPClient from 'http-client-lib';
-
-const baseUrl = 'https://your-api.com';
-const client = new HTTPClient(baseUrl);
-
-async function fetchData() {
-    try {
-        const response = await client.GET('/public-endpoint');
-        console.log(response);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
+// 2. Use the client to make requests
+async function fetchUserData(userId) {
+  try {
+    console.log('Fetching user data...');
+    const userData = await apiClient.GET(`/users/${userId}`);
+    console.log('User Data:', userData);
+    return userData;
+  } catch (error) {
+    // Errors are already logged by the client, but you can add custom handling
+    console.error('Custom error handler: Could not fetch user data.');
+    return null;
+  }
 }
 
-fetchData();
-```
-
-## Setting a JWT Token
-
-To use JWT authentication, you need to set the JWT token in the AuthManager and pass the AuthManager instance to the HTTPClient.
-
-```typescript
-import HTTPClient from 'http-client-lib';
-import { AuthManager } from 'http-client-lib';
-
-// Initialize the AuthManager with the JWT token
-const authManager = new AuthManager();
-authManager.setJWTToken('your-jwt-token-here');
-
-// Initialize the HTTPClient with the base URL and AuthManager
-const client = new HTTPClient('https://your-api.com', authManager);
-
-// Example function to make an authenticated request
-async function fetchData() {
-    try {
-        const response = await client.GET('/secure-endpoint');
-        console.log(response);
-    } catch (error) {
-        console.error('Error fetching secure data:', error);
-    }
+async function createUser(userData) {
+  try {
+    console.log('Creating new user...');
+    const newUser = await apiClient.POST('/users', {
+      name: 'Jane Doe',
+      email: 'jane.doe@example.com'
+    });
+    console.log('Created User:', newUser);
+    return newUser;
+  } catch (error) {
+    console.error('Custom error handler: Could not create user.');
+    return null;
+  }
 }
-
-fetchData();
+// --- Run examples ---
+fetchUserData(1);
+createUser();
 ```
 
-## Using Secure Cookie Authentication
+## API Reference
+All methods return a Promise that resolves with the parsed response body. The client automatically logs detailed status messages and errors to the console.
 
-If your application relies on secure cookies for authentication, you can configure the AuthManager to handle this.
+### GET(endpoint, [headers])
+Performs a GET request.
 
-```typescript
-import HTTPClient from 'http-client-lib';
-import { AuthManager } from 'http-client-lib';
+### POST(endpoint, body, [headers])
+Performs a POST request.
 
-// Initialize the AuthManager to use secure cookies
-const authManager = new AuthManager();
-authManager.configureSecureCookie(true, 'your-cookie-name');
+### PUT(endpoint, body, [headers])
+Performs a PUT request.
 
-// Initialize the HTTPClient with the base URL and AuthManager
-const client = new HTTPClient('https://your-api.com', authManager);
+### PATCH(endpoint, body, [headers])
+Performs a PATCH request.
 
-// Example function to make an authenticated request using cookies
-async function fetchData() {
-    try {
-        const response = await client.GET('/secure-endpoint');
-        console.log(response);
-    } catch (error) {
-        console.error('Error fetching secure data:', error);
-    }
-}
+### DELETE(endpoint, [headers])
+Performs a DELETE request.
 
-fetchData();
-```
+### HEAD(endpoint, [headers])
+Performs a HEAD request and returns a Promise that resolves with the Headers object.
 
-## License
-
-This project is licensed under the GNU General Public License v3.0. See the LICENSE file for details.
-
+## 📄 License
+This project is licensed under the GPLv3 License.
