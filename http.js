@@ -1,5 +1,5 @@
 /**
- * @file httpClient.js
+ * @file http.js
  * @description This library is a simple wrapper around the Fetch API, adhering to RFC 9110 standards.
  *
  * @version 1.0.0
