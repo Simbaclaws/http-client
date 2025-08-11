@@ -15,12 +15,18 @@
 export default class HTTPClient {
     baseUrl;
 
-    /**
-     * Initializes the HTTPClient with a base URL.
-     * @param {string} baseUrl - The base URL for all requests.
+     /**
+     * Initializes the HTTPClient.
+     * @param {string} [baseUrl] - The base URL for all requests. Defaults to the current host's origin if not provided.
      */
     constructor(baseUrl) {
-        this.baseUrl = baseUrl;
+        // Use the provided baseUrl. If it's null or undefined, default to the current window's origin.
+        // The check for `typeof window` ensures this doesn't crash in non-browser environments.
+        if (baseUrl !== undefined && baseUrl !== null) {
+            this.baseUrl = baseUrl;
+        } else {
+            this.baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+        }
     }
 
     /**
