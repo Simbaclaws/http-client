@@ -221,7 +221,6 @@ export default class HTTPClient {
     /**
      * Handles HTTP status codes by logging appropriate messages.
      * @param {Response} response - The fetch API Response object.
-     * @throws {Error} - Throws an error for unhandled status codes.
      */
     async handleStatusCode(response) {
         const { status, statusText, url: resourceUrl } = response;
