@@ -1,4 +1,4 @@
-# httpClient.js
+# 📡 HTTP Client
 A simple, dependency-free JavaScript wrapper for the Fetch API, designed to streamline HTTP requests. This client provides a clean, class-based interface for common REST methods and handles response parsing automatically based on content types.
 
 ##  ✨ Features
@@ -16,14 +16,14 @@ Simply place the httpClient.js file in your project's source directory (e.g., /s
 
 ```javascript
 // In your application file (e.g., /src/app.js)
-import HTTPClient from './utils/httpClient.js';
+import HTTPClient from './utils/http.js';
 ```
 ## Usage
 Instantiate the HTTPClient with the base URL of the API you want to communicate with. You can then call the request methods on the instance.
 
 Example
 ```javascript
-import HTTPClient from './httpClient.js';
+import HTTPClient from './http.js';
 
 // 1. Initialize the client with your API's base URL
 const apiClient = new HTTPClient('https://api.example.com');
