@@ -1,6 +1,6 @@
 /**
  * @file http.js
- * @description This library is a simple wrapper around the Fetch API, adhering to RFC 9110 standards.
+ * @description This library is a simple wrapper around the Fetch API.
  *
  * @version 1.0.0
  * @license GPLv3
