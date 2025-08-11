@@ -18,7 +18,7 @@ Simply place the httpClient.js file in your project's source directory (e.g., /s
 // In your application file (e.g., /src/app.js)
 import HTTPClient from './utils/http.js';
 ```
-## Usage
+## 👨‍💻 Usage
 Instantiate the HTTPClient with the base URL of the API you want to communicate with. You can then call the request methods on the instance.
 
 Example
@@ -61,7 +61,7 @@ fetchUserData(1);
 createUser();
 ```
 
-## API Reference
+## 📚 API Reference
 All methods return a Promise that resolves with the parsed response body. The client automatically logs detailed status messages and errors to the console.
 
 ### GET(endpoint, [headers])
