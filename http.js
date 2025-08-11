@@ -304,7 +304,6 @@ export default class HTTPClient {
         } else {
             const message = `Unhandled status code: ${status} - ${statusText}. Resource: ${resourceUrl}`;
             console.warn(message);
-            throw new Error(message);
         }
     }
 
