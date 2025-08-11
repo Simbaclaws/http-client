@@ -224,89 +224,89 @@ export default class HTTPClient {
      * @throws {Error} - Throws an error for unhandled status codes.
      */
     async handleStatusCode(response) {
-        const statusCode = response.status;
-        const resourceUrl = response.url;
+        const { status, statusText, url: resourceUrl } = response;
 
-        switch (statusCode) {
-            // Informational responses (100–199)
-            case 100: console.info(`100 Continue: The client should continue with its request. Resource: ${resourceUrl}`); break;
-            case 101: console.info(`101 Switching Protocols: The server is switching protocols. Resource: ${resourceUrl}`); break;
-            case 102: console.info(`102 Processing: The server is processing the request, but no response is available yet. Resource: ${resourceUrl}`); break;
-            case 103: console.info(`103 Early Hints: The server is sending some response headers before the final response. Resource: ${resourceUrl}`); break;
+        const statusHandlers = {
+            // 1xx Informational
+            100: { level: 'info', message: 'Continue: The client should continue with its request.' },
+            101: { level: 'info', message: 'Switching Protocols: The server is switching protocols.' },
+            102: { level: 'info', message: 'Processing: The server is processing the request, but no response is available yet.' },
+            103: { level: 'info', message: 'Early Hints: The server is sending some response headers before the final response.' },
+            // 2xx Success
+            200: { level: 'info', message: 'OK: The request has succeeded.' },
+            201: { level: 'info', message: 'Created: The request has been fulfilled and resulted in a new resource being created.' },
+            202: { level: 'info', message: 'Accepted: The request has been accepted for processing, but the processing has not been completed.' },
+            203: { level: 'info', message: 'Non-Authoritative Information: The server is returning information that is not from its origin.' },
+            204: { level: 'info', message: 'No Content: The server successfully processed the request, but is not returning any content.' },
+            205: { level: 'info', message: 'Reset Content: The server successfully processed the request, but requires the client to reset the document view.' },
+            206: { level: 'info', message: 'Partial Content: The server is delivering only part of the resource due to a range header sent by the client.' },
+            207: { level: 'info', message: 'Multi-Status: The message body contains multiple status codes for different operations.' },
+            208: { level: 'info', message: 'Already Reported: The members of a DAV binding have already been enumerated.' },
+            226: { level: 'info', message: 'IM Used: The server has fulfilled the request and the response is a representation of the result of one or more instance-manipulations applied to the current instance.' },
+            // 3xx Redirection
+            300: { level: 'warn', message: 'Multiple Choices: The request has more than one possible response. User-agent or user should choose one of them.' },
+            301: { level: 'warn', message: 'Moved Permanently: The URL of the requested resource has been changed permanently.' },
+            302: { level: 'warn', message: 'Found: The requested resource has been temporarily moved to a different URI.' },
+            303: { level: 'warn', message: 'See Other: The server is redirecting to a different URI.' },
+            304: { level: 'info', message: 'Not Modified: The resource has not been modified since the last request.' },
+            305: { level: 'warn', message: 'Use Proxy: The requested resource is available only through a proxy.' },
+            307: { level: 'warn', message: 'Temporary Redirect: The server is redirecting to a different URI, but the request method should not be changed.' },
+            308: { level: 'warn', message: 'Permanent Redirect: The server is redirecting to a different URI, and the request method should not be changed.' },
+            // 4xx Client Error
+            400: { level: 'error', message: 'Bad Request: The server could not understand the request due to invalid syntax.' },
+            401: { level: 'error', message: 'Unauthorized: The client must authenticate itself to get the requested response.' },
+            402: { level: 'error', message: 'Payment Required: Reserved for future use.' },
+            403: { level: 'error', message: 'Forbidden: The client does not have access rights to the content.' },
+            404: { level: 'error', message: 'Not Found: The server cannot find the requested resource.' },
+            405: { level: 'error', message: 'Method Not Allowed: The request method is known by the server but has been disabled and cannot be used.' },
+            406: { level: 'error', message: 'Not Acceptable: The server cannot produce a response matching the list of acceptable values defined in the request\'s proactive content negotiation headers.' },
+            407: { level: 'error', message: 'Proxy Authentication Required: The client must first authenticate itself with the proxy.' },
+            408: { level: 'error', message: 'Request Timeout: The server would like to shut down this unused connection.' },
+            409: { level: 'error', message: 'Conflict: The request could not be processed because of conflict in the request, such as an edit conflict between multiple simultaneous updates.' },
+            410: { level: 'error', message: 'Gone: The requested resource is no longer available at the server and no forwarding address is known.' },
+            411: { level: 'error', message: 'Length Required: The server refuses to accept the request without a defined Content-Length.' },
+            412: { level: 'error', message: 'Precondition Failed: The server does not meet one of the preconditions that the requester put on the request.' },
+            413: { level: 'error', message: 'Payload Too Large: The request is larger than the server is willing or able to process.' },
+            414: { level: 'error', message: 'URI Too Long: The URI requested by the client is longer than the server is willing to interpret.' },
+            415: { level: 'error', message: 'Unsupported Media Type: The media format of the requested data is not supported by the server.' },
+            416: { level: 'error', message: 'Range Not Satisfiable: The range specified by the Range header field in the request cannot be fulfilled.' },
+            417: { level: 'error', message: 'Expectation Failed: The server cannot meet the requirements of the Expect header field.' },
+            418: { level: 'error', message: 'I\'m a teapot: The server refuses the attempt to brew coffee with a teapot.' },
+            421: { level: 'error', message: 'Misdirected Request: The request was directed at a server that is not able to produce a response.' },
+            422: { level: 'error', message: 'Unprocessable Entity: The request was well-formed but was unable to be followed due to semantic errors.' },
+            423: { level: 'error', message: 'Locked: The resource that is being accessed is locked.' },
+            424: { level: 'error', message: 'Failed Dependency: The request failed due to failure of a previous request.' },
+            425: { level: 'error', message: 'Too Early: Indicates that the server is unwilling to risk processing a request that might be replayed.' },
+            426: { level: 'error', message: 'Upgrade Required: The server refuses to perform the request using the current protocol but might be willing to do so after the client upgrades to a different protocol.' },
+            428: { level: 'error', message: 'Precondition Required: The origin server requires the request to be conditional.' },
+            429: { level: 'error', message: 'Too Many Requests: The user has sent too many requests in a given amount of time.' },
+            431: { level: 'error', message: 'Request Header Fields Too Large: The server is unwilling to process the request because its header fields are too large.' },
+            451: { level: 'error', message: 'Unavailable For Legal Reasons: The user requested a resource that cannot be legally provided, such as a web page censored by a government.' },
+            // 5xx Server Error
+            500: { level: 'error', message: 'Internal Server Error: The server has encountered a situation it doesn\'t know how to handle.' },
+            501: { level: 'error', message: 'Not Implemented: The request method is not supported by the server and cannot be handled.' },
+            502: { level: 'error', message: 'Bad Gateway: The server, while acting as a gateway or proxy, received an invalid response from the upstream server.' },
+            503: { level: 'error', message: 'Service Unavailable: The server is not ready to handle the request.' },
+            504: { level: 'error', message: 'Gateway Timeout: The server, while acting as a gateway or proxy, did not get a response in time from the upstream server.' },
+            505: { level: 'error', message: 'HTTP Version Not Supported: The HTTP version used in the request is not supported by the server.' },
+            506: { level: 'error', message: 'Variant Also Negotiates: The server has an internal configuration error.' },
+            507: { level: 'error', message: 'Insufficient Storage: The server is unable to store the representation needed to complete the request.' },
+            508: { level: 'error', message: 'Loop Detected: The server detected an infinite loop while processing the request.' },
+            510: { level: 'error', message: 'Not Extended: Further extensions to the request are required for the server to fulfill it.' },
+            511: { level: 'error', message: 'Network Authentication Required: The client needs to authenticate to gain network access.' },
+        };
 
-            // Successful responses (200–299)
-            case 200: console.info(`200 OK: The request has succeeded. Resource: ${resourceUrl}`); break;
-            case 201: console.info(`201 Created: The request has been fulfilled and resulted in a new resource being created. Resource: ${resourceUrl}`); break;
-            case 202: console.info(`202 Accepted: The request has been accepted for processing, but the processing has not been completed. Resource: ${resourceUrl}`); break;
-            case 203: console.info(`203 Non-Authoritative Information: The server is returning information that is not from its origin. Resource: ${resourceUrl}`); break;
-            case 204: console.info(`204 No Content: The server successfully processed the request, but is not returning any content. Resource: ${resourceUrl}`); break;
-            case 205: console.info(`205 Reset Content: The server successfully processed the request, but requires the client to reset the document view. Resource: ${resourceUrl}`); break;
-            case 206: console.info(`206 Partial Content: The server is delivering only part of the resource due to a range header sent by the client. Resource: ${resourceUrl}`); break;
-            case 207: console.info(`207 Multi-Status: The message body contains multiple status codes for different operations. Resource: ${resourceUrl}`); break;
-            case 208: console.info(`208 Already Reported: The members of a DAV binding have already been enumerated. Resource: ${resourceUrl}`); break;
-            case 226: console.info(`226 IM Used: The server has fulfilled the request and the response is a representation of the result of one or more instance-manipulations applied to the current instance. Resource: ${resourceUrl}`); break;
+        const handler = statusHandlers[status];
 
-            // Redirection messages (300–399)
-            case 300: console.warn(`300 Multiple Choices: The request has more than one possible response. User-agent or user should choose one of them. Resource: ${resourceUrl}`); break;
-            case 301: console.warn(`301 Moved Permanently: The URL of the requested resource has been changed permanently. Resource: ${resourceUrl}`); break;
-            case 302: console.warn(`302 Found: The requested resource has been temporarily moved to a different URI. Resource: ${resourceUrl}`); break;
-            case 303: console.warn(`303 See Other: The server is redirecting to a different URI. Resource: ${resourceUrl}`); break;
-            case 304: console.info(`304 Not Modified: The resource has not been modified since the last request. Resource: ${resourceUrl}`); break;
-            case 305: console.warn(`305 Use Proxy: The requested resource is available only through a proxy. Resource: ${resourceUrl}`); break;
-            case 307: console.warn(`307 Temporary Redirect: The server is redirecting to a different URI, but the request method should not be changed. Resource: ${resourceUrl}`); break;
-            case 308: console.warn(`308 Permanent Redirect: The server is redirecting to a different URI, and the request method should not be changed. Resource: ${resourceUrl}`); break;
-
-            // Client error responses (400–499)
-            case 400: console.error(`400 Bad Request: The server could not understand the request due to invalid syntax. Resource: ${resourceUrl}`); break;
-            case 401: console.error(`401 Unauthorized: The client must authenticate itself to get the requested response. Resource: ${resourceUrl}`); break;
-            case 402: console.error(`402 Payment Required: Reserved for future use. Resource: ${resourceUrl}`); break;
-            case 403: console.error(`403 Forbidden: The client does not have access rights to the content. Resource: ${resourceUrl}`); break;
-            case 404: console.error(`404 Not Found: The server cannot find the requested resource. Resource: ${resourceUrl}`); break;
-            case 405: console.error(`405 Method Not Allowed: The request method is known by the server but has been disabled and cannot be used. Resource: ${resourceUrl}`); break;
-            case 406: console.error(`406 Not Acceptable: The server cannot produce a response matching the list of acceptable values defined in the request's proactive content negotiation headers. Resource: ${resourceUrl}`); break;
-            case 407: console.error(`407 Proxy Authentication Required: The client must first authenticate itself with the proxy. Resource: ${resourceUrl}`); break;
-            case 408: console.error(`408 Request Timeout: The server would like to shut down this unused connection. Resource: ${resourceUrl}`); break;
-            case 409: console.error(`409 Conflict: The request could not be processed because of conflict in the request, such as an edit conflict between multiple simultaneous updates. Resource: ${resourceUrl}`); break;
-            case 410: console.error(`410 Gone: The requested resource is no longer available at the server and no forwarding address is known. Resource: ${resourceUrl}`); break;
-            case 411: console.error(`411 Length Required: The server refuses to accept the request without a defined Content-Length. Resource: ${resourceUrl}`); break;
-            case 412: console.error(`412 Precondition Failed: The server does not meet one of the preconditions that the requester put on the request. Resource: ${resourceUrl}`); break;
-            case 413: console.error(`413 Payload Too Large: The request is larger than the server is willing or able to process. Resource: ${resourceUrl}`); break;
-            case 414: console.error(`414 URI Too Long: The URI requested by the client is longer than the server is willing to interpret. Resource: ${resourceUrl}`); break;
-            case 415: console.error(`415 Unsupported Media Type: The media format of the requested data is not supported by the server. Resource: ${resourceUrl}`); break;
-            case 416: console.error(`416 Range Not Satisfiable: The range specified by the Range header field in the request cannot be fulfilled. Resource: ${resourceUrl}`); break;
-            case 417: console.error(`417 Expectation Failed: The server cannot meet the requirements of the Expect header field. Resource: ${resourceUrl}`); break;
-            case 418: console.error(`418 I'm a teapot: The server refuses the attempt to brew coffee with a teapot. Resource: ${resourceUrl}`); break;
-            case 421: console.error(`421 Misdirected Request: The request was directed at a server that is not able to produce a response. Resource: ${resourceUrl}`); break;
-            case 422: console.error(`422 Unprocessable Entity: The request was well-formed but was unable to be followed due to semantic errors. Resource: ${resourceUrl}`); break;
-            case 423: console.error(`423 Locked: The resource that is being accessed is locked. Resource: ${resourceUrl}`); break;
-            case 424: console.error(`424 Failed Dependency: The request failed due to failure of a previous request. Resource: ${resourceUrl}`); break;
-            case 425: console.error(`425 Too Early: Indicates that the server is unwilling to risk processing a request that might be replayed. Resource: ${resourceUrl}`); break;
-            case 426: console.error(`426 Upgrade Required: The server refuses to perform the request using the current protocol but might be willing to do so after the client upgrades to a different protocol. Resource: ${resourceUrl}`); break;
-            case 428: console.error(`428 Precondition Required: The origin server requires the request to be conditional. Resource: ${resourceUrl}`); break;
-            case 429: console.error(`429 Too Many Requests: The user has sent too many requests in a given amount of time. Resource: ${resourceUrl}`); break;
-            case 431: console.error(`431 Request Header Fields Too Large: The server is unwilling to process the request because its header fields are too large. Resource: ${resourceUrl}`); break;
-            case 451: console.error(`451 Unavailable For Legal Reasons: The user requested a resource that cannot be legally provided, such as a web page censored by a government. Resource: ${resourceUrl}`); break;
-
-            // Server error responses (500–599)
-            case 500: console.error(`500 Internal Server Error: The server has encountered a situation it doesn't know how to handle. Resource: ${resourceUrl}`); break;
-            case 501: console.error(`501 Not Implemented: The request method is not supported by the server and cannot be handled. Resource: ${resourceUrl}`); break;
-            case 502: console.error(`502 Bad Gateway: The server, while acting as a gateway or proxy, received an invalid response from the upstream server. Resource: ${resourceUrl}`); break;
-            case 503: console.error(`503 Service Unavailable: The server is not ready to handle the request. Resource: ${resourceUrl}`); break;
-            case 504: console.error(`504 Gateway Timeout: The server, while acting as a gateway or proxy, did not get a response in time from the upstream server. Resource: ${resourceUrl}`); break;
-            case 505: console.error(`505 HTTP Version Not Supported: The HTTP version used in the request is not supported by the server. Resource: ${resourceUrl}`); break;
-            case 506: console.error(`506 Variant Also Negotiates: The server has an internal configuration error. Resource: ${resourceUrl}`); break;
-            case 507: console.error(`507 Insufficient Storage: The server is unable to store the representation needed to complete the request. Resource: ${resourceUrl}`); break;
-            case 508: console.error(`508 Loop Detected: The server detected an infinite loop while processing the request. Resource: ${resourceUrl}`); break;
-            case 510: console.error(`510 Not Extended: Further extensions to the request are required for the server to fulfill it. Resource: ${resourceUrl}`); break;
-            case 511: console.error(`511 Network Authentication Required: The client needs to authenticate to gain network access. Resource: ${resourceUrl}`); break;
-
-            // Unhandled status codes
-            default:
-                console.warn(`Unhandled status code: ${statusCode} - ${response.statusText}. Resource: ${resourceUrl}`);
-                throw new Error(`Unhandled status code: ${statusCode} - Resource: ${resourceUrl}`);
+        if (handler) {
+            const message = `${status} ${handler.message} Resource: ${resourceUrl}`;
+            console[handler.level](message);
+        } else {
+            const message = `Unhandled status code: ${status} - ${statusText}. Resource: ${resourceUrl}`;
+            console.warn(message);
+            throw new Error(message);
         }
     }
-
 
     /**
      * Prepares the body for the fetch request based on its type and the HTTP method.
