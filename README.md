@@ -12,7 +12,7 @@ A simple, dependency-free JavaScript wrapper for the Fetch API, designed to stre
 ## 🚀 Installation
 Since this is a single, dependency-free file, no installation via a package manager is needed.
 
-Simply place the httpClient.js file in your project's source directory (e.g., /src/utils/) and import it into your module.
+Simply place the http.js file in your project's source directory (e.g., /src/utils/) and import it into your module.
 
 ```javascript
 // In your application file (e.g., /src/app.js)
